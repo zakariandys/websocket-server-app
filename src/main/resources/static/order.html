@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Example</title>
+</head>
+<body>
+
+<h1>WebSocket Example</h1>
+
+
+
+<div id="messages"></div>
+
+<script>
+        const messagesDiv = document.getElementById('messages');
+        messagesDiv.innerHTML += '<p>' + 'waiting your payment...' + '</p>';
+
+        function getQueryParam(name) {
+            const urlSearchParams = new URLSearchParams(window.location.search);
+            return urlSearchParams.get(name);
+        }
+
+        const orderId = getQueryParam('orderId');
+        console.log(orderId)
+        const socket = new WebSocket(`ws://localhost:8080/ordersocket?orderId=${orderId}`);
+
+        socket.addEventListener('open', (event) => {
+            console.log('WebSocket connection opened:', event);
+        });
+
+        socket.addEventListener('message', (event) => {
+            messagesDiv.innerHTML = '<p>' + event.data.substring(1, event.data.length - 1) + '</p>';
+        });
+
+        socket.addEventListener('error', (event) => {
+            console.error('WebSocket error:', event);
+        });
+
+        socket.addEventListener('close', (event) => {
+            console.log('WebSocket connection closed:', event);
+        });
+
+    </script>
+
+</body>
+</html>
